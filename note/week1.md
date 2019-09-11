@@ -1,6 +1,3 @@
----
-tags: NCTU, embedded, MCU
----
 # Embedded System Design with MCU and FPGA
 * Wed. afternoon in CM600
 * HW and Labs: 70%
