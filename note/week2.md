@@ -45,27 +45,35 @@
     * read only
     * read data from pin
 #### Homework
-* 週五前繳交
+* 週一前繳交
 * lab02_系所_學號_名字
-* Q1. Describe at least two methods that you used to blink the LED.
-* Q2. How many timer in Atmega 328p? What is the usage of timer0 in Arduino world.
+* Q1. [Describe at least two methods that you used to blink the LED.](https://forum.arduino.cc/index.php?topic=4114.0)
+    * Waiting: Light the LED. Do some action that takes 1 second. Shut off the LED. (repeat)
+        * Use delay() function to blink the LED.
+        * delay() is a blocking function.
+        * Use millis() function to blink the LED.
+    * Polling: Use a library like TimedAction, EventFuse, Scheduler or simply 'Blink without delay'
+    * Interrupt
+        * Use a timer to blink the LED.
+        * Use an external interrupt wired to an external source that toggles a logic state each second. (Any clock should be a good source.)
+* Q2. How many timer in ATmega 328p? What is the usage of timer0 in Arduino world.
     * 3?
     * 0: delay, 1: servo control
 * Q4. Explain why we should use the cross-compiler.
     * picture which explains the cross-compiler, 幾台PC之間
-* Q5. Explain your plan of de-bouncing the push button.
+* Q5. Explain your plan of [de-bouncing](https://www.arduino.cc/en/Tutorial/Debounce) the push button.
     * using flow chart or plan or pseudo code
 * Q6. Reading Assigments:
-    * Atmel 328p datasheet, read chapter 7, AVR CPU Core
-    * Atmel 328p datasheet, read chapter 8, AVR Memories
+    * ATmega 328p datasheet, read chapter 7, AVR CPU Core
+    * ATmega 328p datasheet, read chapter 8, AVR Memories
 
 #### 電阻
 * 紅紅棕金 220 5%
 * 棕黑橘今 10000 5%
 * 發光二極體 長腳是正 短腳是負
 ##### EX1
-* shift 1<<5: 0000 0001 -> 0001 0000
-* nor ~(1<<5): 0001 0000 -> 1110 1111
+* shift 1<<5: 0000 0001 &rarr; 0001 0000
+* nor ~(1<<5): 0001 0000 &rarr; 1110 1111
 * (1) PORTB &= ~(1<<5): PORTB = PORTB & (~(1<<5))
 * (2) PORTB |= (1<<5): PORTB = PORTB | (1<<5) >= 0001 0000
 * PRTB = 1111 0000
@@ -77,3 +85,33 @@
 ![figure 1](https://i.imgur.com/mDLWdOb.png)
 ##### EX2
 * #define _BV(bit) (1 << (bit))
+* [timer](http://www.avrbeginners.net/architecture/timers/timers.html)
+    * arduino 晶片中會有多個 timer
+    * timer 不是無時無刻接受脈衝(接受脈衝會加一)，而是要自己設定頻率
+    * 基於 CPU 本身的 clock(prescaler) 去設定他的頻率
+    * TCCR1A: the mode of counter
+    * TCCR1B: set the prescaler, timer increment action(add 1 on T1 pin when falling or rising edge)
+    * set the prescaler of time &rarr; clock of timer = CPU clock/1024
+        ```
+        TCCR1B |= _BV(CS12);
+        TCCR1B &= ~_BV(CS11);
+        TCCR1B |= _BV(CS10);
+        ```
+#### EX5
+ledState = HIGH
+buttonState = None
+lastButtonState = LOW
+
+reading = HIGH
+* led 亮
+lastButtonState = HIGH
+ledState = HIGH
+buttonState = None
+
+reading = HIGH/LOW
+buttonState = HIGH/None
+ledState = LOW/HIGH
+lastButtonState = HIGH/LOW
+* led暗/亮沒變
+
+reading = HIGH
